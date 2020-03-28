@@ -198,6 +198,8 @@ def obtusify(val, idims, SI, pref, loops = 2, maxvalord = None, minvalord = None
     if len(pd) != 0:
         ustring = ustring[:-1]
 
+    #Round oval for readability
+    oval  = np.format_float_positional(oval, precision=4, unique=False, fractional=False, trim='k')
     ostring = str(oval) + ' ' + ustring
 
     #Cleanup plurals
@@ -205,10 +207,3 @@ def obtusify(val, idims, SI, pref, loops = 2, maxvalord = None, minvalord = None
     ostring = ostring.replace('henrys', 'henries')
 
     return ostring
-
-
-
-
-
-
-#

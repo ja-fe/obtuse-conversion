@@ -64,7 +64,4 @@ prefixes = np.array([('yotta', 24),
 
 
 
-
-
-
 #
