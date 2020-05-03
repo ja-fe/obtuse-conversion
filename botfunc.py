@@ -7,7 +7,6 @@ import random
 
 def obtusify(val, idims, SI, pref, loops = 2, maxvalord = None, minvalord = None, maxprefs = None, spread = None):
     '''
-    Yes, obfuscate is a word but it's not as fun now is it? And this is as close as I'll ever get to casting a Harry Potter spell.
     Given a quantity in SI base units, returns an equivalent value in an obtuse combination of
       derived SI units and prefixes
 
@@ -40,14 +39,11 @@ def obtusify(val, idims, SI, pref, loops = 2, maxvalord = None, minvalord = None
         print("You set the output value order minimum higher than the maximum. Don't think I don't see you trying to crash the prefix algorithm.")
         raise Exception
 
-
     #Pick a random non-zero positive dimension
-    nzi = [i for i,x in enumerate(idims) if x > 0]
-    ind = random.choice(nzi)
+    ind = random.choice([i for i,x in enumerate(idims) if x > 0])
 
     #Pick a random SI derived unit which is nonzero positive in this dimension (ensures at least one unit on numerator)
-    SIinds = [i for i,x in enumerate(SI['dims']) if x[ind] > 0]
-    SIind = random.choice(SIinds)
+    SIind = random.choice([i for i,x in enumerate(SI['dims']) if x[ind] > 0])
     SI['count'][SIind] += 1
 
     #Check which dimensions remain to be filled
@@ -75,8 +71,7 @@ def obtusify(val, idims, SI, pref, loops = 2, maxvalord = None, minvalord = None
         if spread is not None and loops - i > 3:
             #Adds a chance to instead select a random unused unit if possible
             if np.random.rand() > spread and 0 in SI['count']:
-                unused_units = [i for i,x in enumerate(SI['count']) if x == 0]
-                uu = random.choice(unused_units)
+                uu = random.choice([i for i,x in enumerate(SI['count']) if x == 0])
                 if np.random.rand() > .5:
                     SI['count'][uu] += 1 #Slap it on the numerator
                 else:
@@ -127,9 +122,9 @@ def obtusify(val, idims, SI, pref, loops = 2, maxvalord = None, minvalord = None
     current_ord = sum([p*e for p,e in zip(pn,en)]) - sum([p*e for p,e in zip(pd,ed)]) - np.floor(np.log10(val))
     ratio = len(pn)/ (len(pn) + len(pd))
     numprobs = [e if p!=0 else 0 for e,p in zip(en,pn)] #Favour modifying high power values (no one wnats to see "yoctometres octed" (I kinda do though))
-    numprobs = np.array(numprobs)/np.sum(numprobs) #  Additionally, don't select empty prefixes for change to prevent conflict with maxprefs
+    numprobs = np.array(numprobs)/np.sum(np.abs(numprobs)) #  Additionally, don't select empty prefixes for change to prevent conflict with maxprefs
     denprobs = [e if p!=0 else 0 for e,p in zip(ed,pd)] #Favour modifying high power values (no one wnats to see "yoctometres octed" (I kinda do though))
-    denprobs = np.array(denprobs)/np.sum(denprobs) #  Additionally, don't select empty prefixes for change to prevent conflict with maxprefs
+    denprobs = np.array(denprobs)/np.sum(np.abs(denprobs)) #  Additionally, don't select empty prefixes for change to prevent conflict with maxprefs
     t = 0
     while current_ord > maxvalord or current_ord < minvalord:
         t+=1
